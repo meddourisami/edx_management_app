@@ -15,6 +15,9 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { PaymentDetailsDialog } from "./payment-details-dialog"
+import { SubscriptionDetailsDialog } from "./subscription-details-dialog"
+import { EditSubscriptionDialog } from "./edit-subscription-dialog"
+import { DeleteConfirmationDialog } from "./delete-confirmation"
 
 interface SubscriptionsTableProps {
   subscriptions: any[]
@@ -23,6 +26,9 @@ interface SubscriptionsTableProps {
 export function SubscriptionsTable({ subscriptions }: SubscriptionsTableProps) {
   const [selectedSubscription, setSelectedSubscription] = useState<any>(null)
   const [showPaymentDetails, setShowPaymentDetails] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
+  const [showEdit, setShowEdit] = useState(false)
+  const [showDelete, setShowDelete] = useState(false)
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -53,6 +59,32 @@ export function SubscriptionsTable({ subscriptions }: SubscriptionsTableProps) {
   const handleViewPayment = (subscription: any) => {
     setSelectedSubscription(subscription)
     setShowPaymentDetails(true)
+  }
+
+  const handleViewDetails = (subscription: any) => {
+    setSelectedSubscription(subscription)
+    setShowDetails(true)
+  }
+
+  const handleEdit = (subscription: any) => {
+    setSelectedSubscription(subscription)
+    setShowEdit(true)
+  }
+
+  const handleDelete = (subscription: any) => {
+    setSelectedSubscription(subscription)
+    setShowDelete(true)
+  }
+
+  const handleSaveEdit = (updatedSubscription: any) => {
+    console.log("[v0] Saving subscription:", updatedSubscription)
+    // Here you would typically update the subscription in your backend
+  }
+
+  const handleConfirmDelete = () => {
+    console.log("[v0] Deleting subscription:", selectedSubscription)
+    // Here you would typically delete the subscription from your backend
+    setShowDelete(false)
   }
 
   return (
@@ -134,9 +166,12 @@ export function SubscriptionsTable({ subscriptions }: SubscriptionsTableProps) {
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="z-50 animate-in fade-in-0 zoom-in-95 duration-200">
+                        <DropdownMenuContent align="end" className="animate-in fade-in-0 zoom-in-95 duration-200">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem className="hover:bg-muted/50 transition-colors duration-200">
+                          <DropdownMenuItem
+                            onClick={() => handleViewDetails(subscription)}
+                            className="hover:bg-muted/50 transition-colors duration-200"
+                          >
                             <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
@@ -147,12 +182,18 @@ export function SubscriptionsTable({ subscriptions }: SubscriptionsTableProps) {
                             <DollarSign className="mr-2 h-4 w-4" />
                             Payment Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-muted/50 transition-colors duration-200">
+                          <DropdownMenuItem
+                            onClick={() => handleEdit(subscription)}
+                            className="hover:bg-muted/50 transition-colors duration-200"
+                          >
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive hover:bg-destructive/10 transition-colors duration-200">
+                          <DropdownMenuItem
+                            onClick={() => handleDelete(subscription)}
+                            className="text-destructive hover:bg-destructive/10 transition-colors duration-200"
+                          >
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete
                           </DropdownMenuItem>
@@ -171,6 +212,20 @@ export function SubscriptionsTable({ subscriptions }: SubscriptionsTableProps) {
         open={showPaymentDetails}
         onOpenChange={setShowPaymentDetails}
         subscription={selectedSubscription}
+      />
+      <SubscriptionDetailsDialog open={showDetails} onOpenChange={setShowDetails} subscription={selectedSubscription} />
+      <EditSubscriptionDialog
+        open={showEdit}
+        onOpenChange={setShowEdit}
+        subscription={selectedSubscription}
+        onSave={handleSaveEdit}
+      />
+      <DeleteConfirmationDialog
+        open={showDelete}
+        onOpenChange={setShowDelete}
+        title="Delete Subscription"
+        description={`Are you sure you want to delete this subscription for ${selectedSubscription?.userName}? This action cannot be undone.`}
+        onConfirm={handleConfirmDelete}
       />
     </>
   )

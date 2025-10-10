@@ -15,6 +15,9 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { PaymentDetailsDialog } from "./payment-details-dialog"
+import { TrainingDetailsDialog } from "./training-details-dialog"
+import { EditTrainingDialog } from "./edit-training-dialog"
+import { DeleteConfirmationDialog } from "./delete-confirmation"
 
 interface TrainingTableProps {
   training: any[]
@@ -23,6 +26,9 @@ interface TrainingTableProps {
 export function TrainingTable({ training }: TrainingTableProps) {
   const [selectedTraining, setSelectedTraining] = useState<any>(null)
   const [showPaymentDetails, setShowPaymentDetails] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
+  const [showEdit, setShowEdit] = useState(false)
+  const [showDelete, setShowDelete] = useState(false)
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -53,6 +59,32 @@ export function TrainingTable({ training }: TrainingTableProps) {
   const handleViewPayment = (training: any) => {
     setSelectedTraining(training)
     setShowPaymentDetails(true)
+  }
+
+  const handleViewDetails = (training: any) => {
+    setSelectedTraining(training)
+    setShowDetails(true)
+  }
+
+  const handleEdit = (training: any) => {
+    setSelectedTraining(training)
+    setShowEdit(true)
+  }
+
+  const handleDelete = (training: any) => {
+    setSelectedTraining(training)
+    setShowDelete(true)
+  }
+
+  const handleSaveEdit = (updatedTraining: any) => {
+    console.log("[v0] Saving training:", updatedTraining)
+    // Here you would typically update the training in your backend
+  }
+
+  const handleConfirmDelete = () => {
+    console.log("[v0] Deleting training:", selectedTraining)
+    // Here you would typically delete the training from your backend
+    setShowDelete(false)
   }
 
   return (
@@ -131,7 +163,10 @@ export function TrainingTable({ training }: TrainingTableProps) {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="animate-in fade-in-0 zoom-in-95 duration-200">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem className="hover:bg-muted/50 transition-colors duration-200">
+                          <DropdownMenuItem
+                            onClick={() => handleViewDetails(program)}
+                            className="hover:bg-muted/50 transition-colors duration-200"
+                          >
                             <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
@@ -142,12 +177,18 @@ export function TrainingTable({ training }: TrainingTableProps) {
                             <DollarSign className="mr-2 h-4 w-4" />
                             Payment Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-muted/50 transition-colors duration-200">
+                          <DropdownMenuItem
+                            onClick={() => handleEdit(program)}
+                            className="hover:bg-muted/50 transition-colors duration-200"
+                          >
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive hover:bg-destructive/10 transition-colors duration-200">
+                          <DropdownMenuItem
+                            onClick={() => handleDelete(program)}
+                            className="text-destructive hover:bg-destructive/10 transition-colors duration-200"
+                          >
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete
                           </DropdownMenuItem>
@@ -166,6 +207,20 @@ export function TrainingTable({ training }: TrainingTableProps) {
         open={showPaymentDetails}
         onOpenChange={setShowPaymentDetails}
         subscription={selectedTraining}
+      />
+      <TrainingDetailsDialog open={showDetails} onOpenChange={setShowDetails} training={selectedTraining} />
+      <EditTrainingDialog
+        open={showEdit}
+        onOpenChange={setShowEdit}
+        training={selectedTraining}
+        onSave={handleSaveEdit}
+      />
+      <DeleteConfirmationDialog
+        open={showDelete}
+        onOpenChange={setShowDelete}
+        title="Delete Training Program"
+        description={`Are you sure you want to delete the ${selectedTraining?.program} training program? This action cannot be undone.`}
+        onConfirm={handleConfirmDelete}
       />
     </>
   )
