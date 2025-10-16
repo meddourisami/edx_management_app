@@ -9,9 +9,10 @@ import { TrainingTable } from "@/components/admin/training-table"
 import { AdminStats } from "@/components/admin/admin-stats"
 import { AddSubscriptionDialog } from "@/components/admin/add-subscription-dialog"
 import { AddTrainingDialog } from "@/components/admin/add-training-dialog"
+import { AddUserDialog } from "@/components/admin/add-user-dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
-import { Download, BookOpen, GraduationCap } from "lucide-react"
+import { Download, BookOpen, GraduationCap, Users } from "lucide-react"
 
 // Mock data for admin view
 const mockUsers = [
@@ -256,6 +257,7 @@ export default function AdminPage() {
   const [user, setUser] = useState(null)
   const [showAddSubscription, setShowAddSubscription] = useState(false)
   const [showAddTraining, setShowAddTraining] = useState(false)
+  const [showAddUser, setShowAddUser] = useState(false)
 
   useEffect(() => {
     const currentUser = requireAuth("admin")
@@ -284,6 +286,13 @@ export default function AdminPage() {
             <Button variant="outline" className="hover:scale-105 transition-transform duration-200 bg-transparent">
               <Download className="h-4 w-4 mr-2" />
               Export Data
+            </Button>
+            <Button
+              onClick={() => setShowAddUser(true)}
+              className="hover:scale-105 transition-transform duration-200 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800"
+            >
+              <Users className="h-4 w-4 mr-2" />
+              Add User
             </Button>
             <Button
               onClick={() => setShowAddSubscription(true)}
@@ -343,6 +352,7 @@ export default function AdminPage() {
           </Tabs>
         </div>
 
+        <AddUserDialog open={showAddUser} onOpenChange={setShowAddUser} />
         <AddSubscriptionDialog open={showAddSubscription} onOpenChange={setShowAddSubscription} users={mockUsers} />
         <AddTrainingDialog open={showAddTraining} onOpenChange={setShowAddTraining} users={mockUsers} />
       </main>

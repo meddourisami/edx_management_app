@@ -16,6 +16,8 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { UserDetailsDialog } from "./user-details"
 import { EditUserDialog } from "./edit-user-dialog"
 import { DeleteConfirmationDialog } from "./delete-confirmation"
@@ -120,38 +122,46 @@ export function UsersTable({ users }: UsersTableProps) {
               <Label className="text-sm font-medium">Search</Label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  type="text"
+                <Input
                   placeholder="Search by name or email..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-full"
+                  className="pl-10 "
                 />
               </div>
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-medium">Role</Label>
-              <select
-                value={filterRole || ""}
-                onChange={(e) => setFilterRole(e.target.value || null)}
-                className="w-full md:w-40"
+              <Select
+                value={filterRole || "all"}
+                onValueChange={(value) => setFilterRole(value === "all" ? null : value)}
               >
-                <option value="">All Roles</option>
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
+                <SelectTrigger className="w-full md:w-40">
+                  <SelectValue placeholder="All Roles" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-medium">Status</Label>
-              <select
-                value={filterStatus || ""}
-                onChange={(e) => setFilterStatus(e.target.value || null)}
-                className="w-full md:w-40"
+              <Select
+                value={filterStatus || "all"}
+                onValueChange={(value) => setFilterStatus(value === "all" ? null : value)}
               >
-                <option value="">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
+                <SelectTrigger className="w-full md:w-40">
+                  <SelectValue placeholder="All Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+
             </div>
             {(searchTerm || filterRole || filterStatus) && (
               <Button
